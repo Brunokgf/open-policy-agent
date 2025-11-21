@@ -1,0 +1,328 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Header } from '@/components/Header';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useCart } from '@/contexts/CartContext';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
+const Checkout = () => {
+  const { cart, totalPrice, clearCart } = useCart();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<'pix' | 'credit_card'>('pix');
+  
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    cpf: '',
+    phone: '',
+    zipCode: '',
+    address: '',
+    number: '',
+    city: '',
+    state: '',
+    cardNumber: '',
+    cardName: '',
+    cardExpMonth: '',
+    cardExpYear: '',
+    cardCvv: '',
+  });
+
+  if (cart.length === 0) {
+    navigate('/cart');
+    return null;
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const { data, error } = await supabase.functions.invoke('process-payment', {
+        body: {
+          amount: Math.round(totalPrice * 100),
+          paymentMethod,
+          customer: {
+            name: formData.name,
+            email: formData.email,
+            document: formData.cpf,
+            phoneNumber: formData.phone,
+          },
+          address: {
+            zipCode: formData.zipCode,
+            street: formData.address,
+            number: formData.number,
+            city: formData.city,
+            state: formData.state,
+            country: 'BR',
+          },
+          card: paymentMethod === 'credit_card' ? {
+            number: formData.cardNumber,
+            holderName: formData.cardName,
+            expMonth: parseInt(formData.cardExpMonth),
+            expYear: parseInt(formData.cardExpYear),
+            cvv: formData.cardCvv,
+          } : undefined,
+          items: cart.map(item => ({
+            description: item.name,
+            quantity: item.quantity,
+            amount: Math.round(item.price * 100),
+          })),
+        },
+      });
+
+      if (error) throw error;
+
+      if (data.success) {
+        if (paymentMethod === 'pix' && data.pixQrCode) {
+          toast.success('QR Code PIX gerado!', {
+            description: 'Escaneie o código para finalizar o pagamento',
+          });
+        } else {
+          toast.success('Pagamento processado com sucesso!');
+          clearCart();
+          navigate('/');
+        }
+      } else {
+        throw new Error(data.message || 'Erro ao processar pagamento');
+      }
+    } catch (error: any) {
+      console.error('Erro no checkout:', error);
+      toast.error('Erro ao processar pagamento', {
+        description: error.message,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Header />
+      <main className="container px-4 py-8">
+        <h1 className="text-3xl font-bold mb-8">Finalizar Compra</h1>
+
+        <div className="grid lg:grid-cols-3 gap-8">
+          <form onSubmit={handleSubmit} className="lg:col-span-2 space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Dados Pessoais</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Nome Completo</Label>
+                    <Input
+                      id="name"
+                      required
+                      value={formData.name}
+                      onChange={e => setFormData({ ...formData, name: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email">E-mail</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      required
+                      value={formData.email}
+                      onChange={e => setFormData({ ...formData, email: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="cpf">CPF</Label>
+                    <Input
+                      id="cpf"
+                      required
+                      value={formData.cpf}
+                      onChange={e => setFormData({ ...formData, cpf: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Telefone</Label>
+                    <Input
+                      id="phone"
+                      required
+                      value={formData.phone}
+                      onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Endereço de Entrega</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="zipCode">CEP</Label>
+                    <Input
+                      id="zipCode"
+                      required
+                      value={formData.zipCode}
+                      onChange={e => setFormData({ ...formData, zipCode: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="number">Número</Label>
+                    <Input
+                      id="number"
+                      required
+                      value={formData.number}
+                      onChange={e => setFormData({ ...formData, number: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2 md:col-span-2">
+                    <Label htmlFor="address">Endereço</Label>
+                    <Input
+                      id="address"
+                      required
+                      value={formData.address}
+                      onChange={e => setFormData({ ...formData, address: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="city">Cidade</Label>
+                    <Input
+                      id="city"
+                      required
+                      value={formData.city}
+                      onChange={e => setFormData({ ...formData, city: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="state">Estado</Label>
+                    <Input
+                      id="state"
+                      required
+                      value={formData.state}
+                      onChange={e => setFormData({ ...formData, state: e.target.value })}
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Forma de Pagamento</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Tabs value={paymentMethod} onValueChange={(v) => setPaymentMethod(v as any)}>
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="pix">PIX</TabsTrigger>
+                    <TabsTrigger value="credit_card">Cartão de Crédito</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="pix" className="space-y-4">
+                    <p className="text-sm text-muted-foreground">
+                      Após confirmar, você receberá um QR Code para pagamento via PIX
+                    </p>
+                  </TabsContent>
+                  <TabsContent value="credit_card" className="space-y-4">
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="space-y-2 md:col-span-2">
+                        <Label htmlFor="cardNumber">Número do Cartão</Label>
+                        <Input
+                          id="cardNumber"
+                          required={paymentMethod === 'credit_card'}
+                          value={formData.cardNumber}
+                          onChange={e => setFormData({ ...formData, cardNumber: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-2 md:col-span-2">
+                        <Label htmlFor="cardName">Nome no Cartão</Label>
+                        <Input
+                          id="cardName"
+                          required={paymentMethod === 'credit_card'}
+                          value={formData.cardName}
+                          onChange={e => setFormData({ ...formData, cardName: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="cardExpMonth">Mês</Label>
+                        <Input
+                          id="cardExpMonth"
+                          placeholder="MM"
+                          required={paymentMethod === 'credit_card'}
+                          value={formData.cardExpMonth}
+                          onChange={e => setFormData({ ...formData, cardExpMonth: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="cardExpYear">Ano</Label>
+                        <Input
+                          id="cardExpYear"
+                          placeholder="AAAA"
+                          required={paymentMethod === 'credit_card'}
+                          value={formData.cardExpYear}
+                          onChange={e => setFormData({ ...formData, cardExpYear: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="cardCvv">CVV</Label>
+                        <Input
+                          id="cardCvv"
+                          required={paymentMethod === 'credit_card'}
+                          value={formData.cardCvv}
+                          onChange={e => setFormData({ ...formData, cardCvv: e.target.value })}
+                        />
+                      </div>
+                    </div>
+                  </TabsContent>
+                </Tabs>
+              </CardContent>
+            </Card>
+
+            <Button type="submit" size="lg" className="w-full" disabled={loading}>
+              {loading ? 'Processando...' : 'Finalizar Compra'}
+            </Button>
+          </form>
+
+          <div>
+            <Card className="sticky top-20">
+              <CardHeader>
+                <CardTitle>Resumo do Pedido</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  {cart.map(item => (
+                    <div key={item.id} className="flex justify-between text-sm">
+                      <span>
+                        {item.name} x{item.quantity}
+                      </span>
+                      <span>R$ {(item.price * item.quantity).toFixed(2)}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="border-t pt-4 space-y-2">
+                  <div className="flex justify-between">
+                    <span>Subtotal</span>
+                    <span>R$ {totalPrice.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Frete</span>
+                    <span className="text-green-600">Grátis</span>
+                  </div>
+                  <div className="flex justify-between font-bold text-lg pt-2 border-t">
+                    <span>Total</span>
+                    <span className="text-primary">R$ {totalPrice.toFixed(2)}</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+};
+
+export default Checkout;
