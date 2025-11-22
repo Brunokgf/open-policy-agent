@@ -1,4 +1,5 @@
 import { Header } from '@/components/Header';
+import { PromoBanner } from '@/components/PromoBanner';
 import { ProductCard } from '@/components/ProductCard';
 import { products } from '@/data/products';
 
@@ -6,6 +7,7 @@ const Products = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
+      <PromoBanner />
       <main className="container px-4 py-8">
         <div className="mb-8">
           <h2 className="text-3xl font-bold mb-2">Nossos Produtos</h2>

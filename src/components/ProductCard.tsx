@@ -39,17 +39,24 @@ export const ProductCard = ({ product }: ProductCardProps) => {
               {product.description}
             </p>
           </div>
-          <div className="flex w-full items-center justify-between">
-            <p className="text-lg font-bold text-primary">
-              R$ {product.price.toFixed(2)}
-            </p>
-            <Button
-              size="icon"
-              onClick={handleAddToCart}
-              className="rounded-full"
-            >
-              <ShoppingCart className="h-4 w-4" />
-            </Button>
+          <div className="w-full space-y-1">
+            <div className="flex w-full items-center justify-between">
+              <div>
+                <p className="text-lg font-bold text-primary">
+                  R$ {product.price.toFixed(2)}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  ou 10x de R$ {(product.price / 10).toFixed(2)}
+                </p>
+              </div>
+              <Button
+                size="icon"
+                onClick={handleAddToCart}
+                className="rounded-full"
+              >
+                <ShoppingCart className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </CardFooter>
       </Card>

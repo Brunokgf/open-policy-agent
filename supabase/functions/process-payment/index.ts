@@ -71,10 +71,21 @@ serve(async (req) => {
 
     const data = await response.json();
 
-    console.log('Resposta do Medusa Bank:', data);
+    console.log('Resposta do Medusa Bank:', { status: response.status, data });
 
     if (!response.ok) {
-      throw new Error(data.message || 'Erro ao processar pagamento');
+      console.error('Erro da API Medusa:', data);
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: data.message || 'Erro ao processar pagamento na API do Medusa Bank',
+          details: data,
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: response.status,
+        }
+      );
     }
 
     return new Response(
@@ -96,11 +107,12 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({
         success: false,
-        error: error?.message || 'Erro desconhecido',
+        error: error?.message || 'Erro interno no servidor',
+        stack: error?.stack,
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 400,
+        status: 500,
       }
     );
   }
