@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Header } from '@/components/Header';
 import { PromoBanner } from '@/components/PromoBanner';
+import { HeroBanners } from '@/components/HeroBanners';
 import { ProductCard } from '@/components/ProductCard';
 import { ProductFilters } from '@/components/ProductFilters';
 import { products } from '@/data/products';
@@ -53,6 +54,9 @@ const Products = () => {
     <div className="min-h-screen bg-background">
       <Header searchTerm={searchTerm} onSearchChange={setSearchTerm} />
       <PromoBanner />
+      <div className="container px-4 py-6">
+        <HeroBanners />
+      </div>
       <main className="container px-4 py-8">
         <div className="mb-8">
           <h2 className="text-3xl font-bold mb-2">Nossos Produtos</h2>
