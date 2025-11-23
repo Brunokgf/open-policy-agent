@@ -35,18 +35,26 @@ serve(async (req) => {
       customer: {
         name: customer.name,
         email: customer.email,
-        document: customer.document,
-        phoneNumber: customer.phoneNumber,
+        document: {
+          type: customer.document.length === 14 ? 'CPF' : 'CNPJ',
+          number: customer.document.replace(/\D/g, ''), // Remove formatação
+        },
+        phoneNumber: customer.phoneNumber.replace(/\D/g, ''),
       },
       address: {
-        zipCode: address.zipCode,
+        zipCode: address.zipCode.replace(/\D/g, ''),
         street: address.street,
         number: address.number,
         city: address.city,
         state: address.state,
         country: address.country,
       },
-      items: items || [],
+      items: (items || []).map((item: any) => ({
+        title: item.description || item.title,
+        unitPrice: item.amount || item.unitPrice,
+        quantity: item.quantity || 1,
+        tangible: true, // Produtos físicos
+      })),
     };
 
     // Se for cartão de crédito, primeiro encriptar os dados do cartão
@@ -71,7 +79,7 @@ serve(async (req) => {
 
     const data = await response.json();
 
-    console.log('Resposta do Medusa Bank:', { status: response.status, data });
+    console.log('Resposta do Medusa Bank:', data);
 
     if (!response.ok) {
       console.error('Erro da API Medusa:', data);
