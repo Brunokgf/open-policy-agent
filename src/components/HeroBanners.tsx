@@ -4,26 +4,18 @@ export const HeroBanners = () => {
       {/* Banner Topo */}
       <div className="w-full overflow-hidden rounded-lg">
         <img
-          src="/images/banner-topo.gif"
+          src="/images/banner-topo.webp"
           alt="Banner promocional Sephora"
           className="w-full h-auto object-cover"
-          onError={(e) => {
-            // Fallback se a imagem não carregar
-            e.currentTarget.style.display = 'none';
-          }}
         />
       </div>
 
       {/* Banner Categoria */}
       <div className="w-full overflow-hidden rounded-lg">
         <img
-          src="/images/banner-categoria.jpg"
+          src="/images/banner-categoria.avif"
           alt="Banner categoria skincare"
           className="w-full h-auto object-cover"
-          onError={(e) => {
-            // Fallback se a imagem não carregar
-            e.currentTarget.style.display = 'none';
-          }}
         />
       </div>
     </div>
