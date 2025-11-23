@@ -1,20 +1,41 @@
-import { ShoppingCart, Shield, MessageCircle } from 'lucide-react';
+import { ShoppingCart, Shield, MessageCircle, Search } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useCart } from '@/contexts/CartContext';
 import { Button } from './ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
+import { Input } from './ui/input';
 
-export const Header = () => {
+interface HeaderProps {
+  searchTerm?: string;
+  onSearchChange?: (value: string) => void;
+}
+
+export const Header = ({ searchTerm = '', onSearchChange }: HeaderProps) => {
   const { totalItems } = useCart();
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between px-4">
-        <Link to="/" className="flex items-center space-x-2">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent tracking-tight">
-            SEPHORA
-          </h1>
-        </Link>
+    <header className="sticky top-0 z-50 w-full border-b bg-black">
+      <div className="container flex h-16 items-center justify-between px-4 gap-4">
+        <div className="flex items-center gap-6 flex-1">
+          <Link to="/" className="flex items-center space-x-2">
+            <h1 className="text-3xl font-bold text-white tracking-tight whitespace-nowrap">
+              SEPHORA
+            </h1>
+          </Link>
+          
+          {onSearchChange && (
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Buscar produtos..."
+                value={searchTerm}
+                onChange={(e) => onSearchChange(e.target.value)}
+                className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/60"
+              />
+            </div>
+          )}
+        </div>
         
         <nav className="flex items-center space-x-4">
           <TooltipProvider>
@@ -43,12 +64,12 @@ export const Header = () => {
             </Tooltip>
           </TooltipProvider>
           
-          <Link to="/" className="text-sm font-medium transition-colors hover:text-primary">
+          <Link to="/" className="text-sm font-medium text-white transition-colors hover:text-white/80">
             Produtos
           </Link>
           
           <Link to="/cart">
-            <Button variant="ghost" size="icon" className="relative">
+            <Button variant="ghost" size="icon" className="relative text-white hover:text-white/80">
               <ShoppingCart className="h-5 w-5" />
               {totalItems > 0 && (
                 <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-primary text-xs text-primary-foreground flex items-center justify-center">
