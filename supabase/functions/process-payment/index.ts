@@ -36,7 +36,7 @@ serve(async (req) => {
         name: customer.name,
         email: customer.email,
         document: {
-          type: customer.document.length === 14 ? 'CPF' : 'CNPJ',
+          type: customer.document.length === 14 ? 'cpf' : 'cnpj',
           number: customer.document.replace(/\D/g, ''), // Remove formatação
         },
         phoneNumber: customer.phoneNumber.replace(/\D/g, ''),
