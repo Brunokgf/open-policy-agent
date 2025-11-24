@@ -14,7 +14,15 @@ export const Header = ({ searchTerm = '', onSearchChange }: HeaderProps) => {
   const { totalItems } = useCart();
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-black">
+    <>
+      <div className="w-full bg-gradient-to-r from-red-600 to-pink-600 py-2 px-4">
+        <div className="container flex items-center justify-center">
+          <p className="text-white text-sm md:text-lg font-bold tracking-wide">
+            SEPHORA <span className="text-xl md:text-2xl">FRIDAY</span> <span className="bg-black text-white px-2 py-1 rounded">ATÉ</span> <span className="text-2xl md:text-4xl font-extrabold">70% OFF</span>
+          </p>
+        </div>
+      </div>
+      <header className="sticky top-0 z-50 w-full border-b bg-black">
       <div className="container flex h-16 items-center justify-between px-4 gap-4">
         <div className="flex items-center gap-6 flex-1">
           <Link to="/" className="flex items-center space-x-2">
@@ -81,5 +89,6 @@ export const Header = ({ searchTerm = '', onSearchChange }: HeaderProps) => {
         </nav>
       </div>
     </header>
+    </>
   );
 };
