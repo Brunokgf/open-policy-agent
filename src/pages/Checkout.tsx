@@ -15,6 +15,7 @@ const Checkout = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<'pix' | 'credit_card'>('pix');
+  const [pixData, setPixData] = useState<{ qrCode: string; qrCodeUrl: string } | null>(null);
   
   const [formData, setFormData] = useState({
     name: '',
@@ -80,6 +81,10 @@ const Checkout = () => {
 
       if (data.success) {
         if (paymentMethod === 'pix' && data.pixQrCode) {
+          setPixData({
+            qrCode: data.pixQrCode,
+            qrCodeUrl: data.pixQrCodeUrl,
+          });
           toast.success('QR Code PIX gerado!', {
             description: 'Escaneie o código para finalizar o pagamento',
           });
@@ -89,7 +94,7 @@ const Checkout = () => {
           navigate('/');
         }
       } else {
-        throw new Error(data.message || 'Erro ao processar pagamento');
+        throw new Error(data.error || data.message || 'Erro ao processar pagamento');
       }
     } catch (error: any) {
       console.error('Erro no checkout:', error);
@@ -100,6 +105,73 @@ const Checkout = () => {
       setLoading(false);
     }
   };
+
+  if (pixData) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="container px-4 py-8 max-w-2xl mx-auto">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-center">Pagamento via PIX</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="text-center space-y-4">
+                <p className="text-muted-foreground">
+                  Escaneie o QR Code abaixo com o app do seu banco para finalizar o pagamento
+                </p>
+                {pixData.qrCodeUrl && (
+                  <div className="flex justify-center">
+                    <img 
+                      src={pixData.qrCodeUrl} 
+                      alt="QR Code PIX" 
+                      className="w-64 h-64 border rounded-lg"
+                    />
+                  </div>
+                )}
+                <div className="space-y-2">
+                  <Label>Código PIX Copia e Cola</Label>
+                  <div className="flex gap-2">
+                    <Input 
+                      value={pixData.qrCode} 
+                      readOnly 
+                      className="font-mono text-xs"
+                    />
+                    <Button
+                      onClick={() => {
+                        navigator.clipboard.writeText(pixData.qrCode);
+                        toast.success('Código copiado!');
+                      }}
+                    >
+                      Copiar
+                    </Button>
+                  </div>
+                </div>
+                <div className="pt-4 space-y-2">
+                  <p className="text-sm text-muted-foreground">
+                    Total a pagar: <strong className="text-foreground text-lg">R$ {totalPrice.toFixed(2)}</strong>
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Após o pagamento, você receberá uma confirmação por e-mail
+                  </p>
+                </div>
+                <Button 
+                  onClick={() => {
+                    clearCart();
+                    navigate('/');
+                  }}
+                  variant="outline"
+                  className="w-full"
+                >
+                  Finalizar e Voltar para Loja
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
