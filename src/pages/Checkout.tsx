@@ -32,6 +32,7 @@ const Checkout = () => {
     cardExpMonth: '',
     cardExpYear: '',
     cardCvv: '',
+    installments: '1',
   });
 
   if (cart.length === 0) {
@@ -69,6 +70,7 @@ const Checkout = () => {
             expYear: parseInt(formData.cardExpYear),
             cvv: formData.cardCvv,
           } : undefined,
+          installments: paymentMethod === 'credit_card' ? parseInt(formData.installments) : undefined,
           items: cart.map(item => ({
             description: item.name,
             quantity: item.quantity,
@@ -346,6 +348,24 @@ const Checkout = () => {
                           value={formData.cardCvv}
                           onChange={e => setFormData({ ...formData, cardCvv: e.target.value })}
                         />
+                      </div>
+                      <div className="space-y-2 md:col-span-2">
+                        <Label htmlFor="installments">Parcelamento</Label>
+                        <select
+                          id="installments"
+                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                          value={formData.installments}
+                          onChange={e => setFormData({ ...formData, installments: e.target.value })}
+                        >
+                          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(num => {
+                            const installmentPrice = totalPrice / num;
+                            return (
+                              <option key={num} value={num}>
+                                {num}x de R$ {installmentPrice.toFixed(2)} {num === 1 ? 'sem juros' : ''}
+                              </option>
+                            );
+                          })}
+                        </select>
                       </div>
                     </div>
                   </TabsContent>
