@@ -18,6 +18,7 @@ serve(async (req) => {
       address,
       card,
       items,
+      installments,
     } = await req.json();
 
     const publicKey = Deno.env.get('MEDUSA_PUBLIC_KEY') || 'pk_nKWIwSX_T2EpZUnBoq_huCxktI6A5zx4VDHE4jdtQZrlCBD3';
@@ -64,6 +65,11 @@ serve(async (req) => {
       payload.card = {
         encryptedData: btoa(JSON.stringify(card)), // Simplificado para exemplo
       };
+      
+      // Adicionar parcelamento se especificado
+      if (installments) {
+        payload.installments = installments;
+      }
     }
 
     console.log('Processando pagamento:', { paymentMethod, amount });
