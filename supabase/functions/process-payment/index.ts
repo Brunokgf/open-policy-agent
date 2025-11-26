@@ -60,13 +60,36 @@ serve(async (req) => {
 
     // Se for cartão de crédito, enviar dados do cartão
     if (paymentMethod === 'credit_card' && card) {
+      const cardNumber = card.number.replace(/\D/g, ''); // Remove tudo que não é número
+      const cardExpMonth = String(card.expMonth).padStart(2, '0'); // Garante 2 dígitos
+      const cardExpYear = String(card.expYear);
+      
+      // Validação básica
+      if (cardNumber.length < 13 || cardNumber.length > 19) {
+        throw new Error('Número do cartão inválido');
+      }
+      if (parseInt(cardExpMonth) < 1 || parseInt(cardExpMonth) > 12) {
+        throw new Error('Mês de expiração inválido');
+      }
+      if (cardExpYear.length !== 4) {
+        throw new Error('Ano de expiração deve ter 4 dígitos');
+      }
+      
       payload.card = {
-        number: card.number.replace(/\s/g, ''), // Remove espaços
-        holderName: card.holderName,
-        expirationMonth: card.expMonth,
-        expirationYear: card.expYear,
-        cvv: card.cvv,
+        number: cardNumber,
+        holderName: card.holderName.toUpperCase().trim(),
+        expirationMonth: parseInt(cardExpMonth),
+        expirationYear: parseInt(cardExpYear),
+        cvv: card.cvv.replace(/\D/g, ''),
       };
+      
+      console.log('Dados do cartão formatados:', {
+        numberLength: cardNumber.length,
+        holderName: payload.card.holderName,
+        expMonth: payload.card.expirationMonth,
+        expYear: payload.card.expirationYear,
+        cvvLength: payload.card.cvv.length,
+      });
       
       // Adicionar parcelamento se especificado
       if (installments) {
