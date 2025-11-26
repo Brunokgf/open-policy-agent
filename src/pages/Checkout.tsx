@@ -83,9 +83,12 @@ const Checkout = () => {
 
       if (data.success) {
         if (paymentMethod === 'pix' && data.pixQrCode) {
+          // Gerar URL da imagem do QR code a partir do código PIX
+          const qrCodeImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(data.pixQrCode)}`;
+          
           setPixData({
             qrCode: data.pixQrCode,
-            qrCodeUrl: data.pixQrCodeUrl,
+            qrCodeUrl: qrCodeImageUrl,
           });
           toast.success('QR Code PIX gerado!', {
             description: 'Escaneie o código para finalizar o pagamento',
