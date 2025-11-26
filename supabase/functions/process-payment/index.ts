@@ -58,12 +58,14 @@ serve(async (req) => {
       })),
     };
 
-    // Se for cartão de crédito, primeiro encriptar os dados do cartão
+    // Se for cartão de crédito, enviar dados do cartão
     if (paymentMethod === 'credit_card' && card) {
-      // Carregar o script do Medusa Bank para encriptação
-      // Nota: Em produção, isso deveria ser feito no frontend
       payload.card = {
-        encryptedData: btoa(JSON.stringify(card)), // Simplificado para exemplo
+        number: card.number.replace(/\s/g, ''), // Remove espaços
+        holderName: card.holderName,
+        expirationMonth: card.expMonth,
+        expirationYear: card.expYear,
+        cvv: card.cvv,
       };
       
       // Adicionar parcelamento se especificado
