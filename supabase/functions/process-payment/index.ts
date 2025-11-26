@@ -107,8 +107,8 @@ serve(async (req) => {
         success: true,
         transactionId: data.id,
         status: data.status,
-        pixQrCode: data.pixQrCode,
-        pixQrCodeUrl: data.pixQrCodeUrl,
+        pixQrCode: data.pix?.qrcode || data.pixQrCode,
+        pixQrCodeUrl: data.pix?.qrcodeUrl || data.pixQrCodeUrl,
         message: 'Pagamento processado com sucesso',
       }),
       {
