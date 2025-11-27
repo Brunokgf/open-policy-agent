@@ -60,44 +60,87 @@ serve(async (req) => {
 
     // Se for cartão de crédito, enviar dados do cartão
     if (paymentMethod === 'credit_card' && card) {
-      const cardNumber = card.number.replace(/\D/g, ''); // Remove tudo que não é número
-      const cardExpMonth = String(card.expMonth).padStart(2, '0'); // Garante 2 dígitos
-      const cardExpYear = String(card.expYear);
+      console.log('Processando cartão de crédito - dados recebidos:', {
+        hasNumber: !!card.number,
+        hasHolderName: !!card.holderName,
+        expMonth: card.expMonth,
+        expYear: card.expYear,
+        hasCvv: !!card.cvv,
+      });
+
+      const cardNumber = String(card.number).replace(/\D/g, '');
+      const cardExpMonth = String(card.expMonth).replace(/\D/g, '').padStart(2, '0');
+      let cardExpYear = String(card.expYear).replace(/\D/g, '');
+      
+      // Converter ano de 2 dígitos para 4 dígitos se necessário
+      if (cardExpYear.length === 2) {
+        cardExpYear = '20' + cardExpYear;
+      }
+      
+      console.log('Dados do cartão após formatação:', {
+        numberLength: cardNumber.length,
+        expMonth: cardExpMonth,
+        expYear: cardExpYear,
+      });
       
       // Validação básica
       if (cardNumber.length < 13 || cardNumber.length > 19) {
+        console.error('Número do cartão inválido:', cardNumber.length);
         throw new Error('Número do cartão inválido');
       }
       if (parseInt(cardExpMonth) < 1 || parseInt(cardExpMonth) > 12) {
+        console.error('Mês de expiração inválido:', cardExpMonth);
         throw new Error('Mês de expiração inválido');
       }
       if (cardExpYear.length !== 4) {
+        console.error('Ano de expiração deve ter 4 dígitos:', cardExpYear);
         throw new Error('Ano de expiração deve ter 4 dígitos');
+      }
+      
+      const cvv = String(card.cvv).replace(/\D/g, '');
+      if (cvv.length < 3 || cvv.length > 4) {
+        console.error('CVV inválido:', cvv.length);
+        throw new Error('CVV inválido');
       }
       
       payload.card = {
         number: cardNumber,
-        holderName: card.holderName.toUpperCase().trim(),
+        holderName: String(card.holderName).toUpperCase().trim(),
         expirationMonth: parseInt(cardExpMonth),
         expirationYear: parseInt(cardExpYear),
-        cvv: card.cvv.replace(/\D/g, ''),
+        cvv: cvv,
       };
       
-      console.log('Dados do cartão formatados:', {
-        numberLength: cardNumber.length,
+      console.log('Dados do cartão prontos para envio:', {
+        numberLength: payload.card.number.length,
         holderName: payload.card.holderName,
-        expMonth: payload.card.expirationMonth,
-        expYear: payload.card.expirationYear,
+        expirationMonth: payload.card.expirationMonth,
+        expirationYear: payload.card.expirationYear,
         cvvLength: payload.card.cvv.length,
       });
       
       // Adicionar parcelamento se especificado
-      if (installments) {
+      if (installments && installments > 1) {
         payload.installments = installments;
+        console.log('Parcelamento configurado:', installments);
       }
     }
 
-    console.log('Processando pagamento:', { paymentMethod, amount });
+    console.log('Processando pagamento:', { 
+      paymentMethod, 
+      amount,
+      hasCard: !!payload.card,
+      installments: payload.installments 
+    });
+    
+    console.log('Payload completo (sem dados sensíveis):', {
+      amount: payload.amount,
+      paymentMethod: payload.paymentMethod,
+      customerName: payload.customer.name,
+      hasCard: !!payload.card,
+      installments: payload.installments,
+      itemsCount: payload.items.length,
+    });
 
     const response = await fetch('https://api.ecossistemamedusa.com.br/v1/transactions', {
       method: 'POST',

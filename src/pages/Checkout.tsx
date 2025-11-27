@@ -66,8 +66,8 @@ const Checkout = () => {
           card: paymentMethod === 'credit_card' ? {
             number: formData.cardNumber,
             holderName: formData.cardName,
-            expMonth: parseInt(formData.cardExpMonth),
-            expYear: parseInt(formData.cardExpYear),
+            expMonth: formData.cardExpMonth,
+            expYear: formData.cardExpYear.length === 2 ? `20${formData.cardExpYear}` : formData.cardExpYear,
             cvv: formData.cardCvv,
           } : undefined,
           installments: paymentMethod === 'credit_card' ? parseInt(formData.installments) : undefined,
