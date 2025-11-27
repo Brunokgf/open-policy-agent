@@ -19,9 +19,9 @@ export const HeroBanners = () => {
   const [emblaRef, emblaApi] = useEmblaCarousel(
     { 
       loop: true,
-      duration: 30,
+      dragFree: true,
     },
-    [Autoplay({ delay: 4000, stopOnInteraction: false })]
+    [Autoplay({ delay: 4000, stopOnInteraction: true })]
   );
 
   const scrollPrev = useCallback(() => {
