@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { useCart } from '@/contexts/CartContext';
 import { products } from '@/data/products';
 import { toast } from 'sonner';
+import { ProductImageGallery } from '@/components/ProductImageGallery';
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -43,13 +44,10 @@ const ProductDetail = () => {
         </Button>
 
         <div className="grid md:grid-cols-2 gap-8">
-          <div className="aspect-square overflow-hidden rounded-lg">
-            <img
-              src={product.image}
-              alt={product.name}
-              className="h-full w-full object-cover"
-            />
-          </div>
+          <ProductImageGallery 
+            images={product.images || [product.image]} 
+            productName={product.name}
+          />
 
           <div className="flex flex-col gap-6">
             <div>
