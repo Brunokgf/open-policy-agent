@@ -89,10 +89,11 @@ export const products: Product[] = [
   },
   {
     id: '11',
-    name: 'Sérum Facial Sephora Collection Efeito Glow Boosting',
-    price: 143.20,
-    image: '/images/SC_Assets178.avif',
-    description: 'Sérum iluminador da Sephora Collection para pele radiante',
+    name: 'Hidratante em Gel Sephora Collection Brightening Cream',
+    price: 127.20,
+    image: '/images/SC_Assets225-2.avif',
+    images: ['/images/SC_Assets225-2.avif', '/images/SC_Assets227-2.avif'],
+    description: 'Hidratante em gel com efeito iluminador para pele radiante',
     category: 'SEPHORA COLLECTION',
   },
   {
@@ -133,11 +134,10 @@ export const products: Product[] = [
   },
   {
     id: '16',
-    name: 'Hidratante em Gel Sephora Collection Brightening Cream',
-    price: 127.20,
-    image: '/images/SC_Assets225-2.avif',
-    images: ['/images/SC_Assets225-2.avif', '/images/SC_Assets227-2.avif'],
-    description: 'Hidratante em gel com efeito iluminador para pele radiante',
+    name: 'Sérum Facial Sephora Collection Efeito Glow Boosting',
+    price: 143.20,
+    image: '/images/SC_Assets178.avif',
+    description: 'Sérum iluminador da Sephora Collection para pele radiante',
     category: 'SEPHORA COLLECTION',
   },
   {
