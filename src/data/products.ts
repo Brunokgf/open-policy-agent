@@ -89,10 +89,11 @@ export const products: Product[] = [
   },
   {
     id: '11',
-    name: 'Hidratante em Gel Sephora Collection Brightening Cream',
-    price: 127.20,
-    image: '/images/SC_Assets178.avif',
-    description: 'Hidratante em gel com efeito iluminador para pele radiante',
+    name: 'Creme para Olhos Sephora Collection Brightening',
+    price: 103.20,
+    image: '/images/SC_Assets115.avif',
+    images: ['/images/SC_Assets115.avif', '/images/SC_Assets116.avif', '/images/SC_Assets117.avif'],
+    description: 'Creme iluminador para área dos olhos que reduz olheiras e hidrata',
     category: 'SEPHORA COLLECTION',
   },
   {
@@ -106,11 +107,11 @@ export const products: Product[] = [
   },
   {
     id: '13',
-    name: 'Creme para Olhos Sephora Collection Brightening',
-    price: 103.20,
-    image: '/images/SC_Assets115.avif',
-    images: ['/images/SC_Assets115.avif', '/images/SC_Assets116.avif', '/images/SC_Assets117.avif'],
-    description: 'Creme iluminador para área dos olhos que reduz olheiras e hidrata',
+    name: 'Hidratante em Gel Sephora Collection Brightening Cream',
+    price: 127.20,
+    image: '/images/SC_Assets225-2.avif',
+    images: ['/images/SC_Assets225-2.avif', '/images/SC_Assets227-2.avif'],
+    description: 'Hidratante em gel com efeito iluminador para pele radiante',
     category: 'SEPHORA COLLECTION',
   },
   {
