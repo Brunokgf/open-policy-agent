@@ -119,11 +119,9 @@ serve(async (req) => {
         cvvLength: payload.card.cvv.length,
       });
       
-      // Adicionar parcelamento se especificado
-      if (installments && installments > 1) {
-        payload.installments = installments;
-        console.log('Parcelamento configurado:', installments);
-      }
+      // SEMPRE adicionar parcelamento para pagamentos com cartão (obrigatório pela API)
+      payload.installments = installments || 1;
+      console.log('Parcelamento configurado:', payload.installments);
     }
 
     console.log('Processando pagamento:', { 
