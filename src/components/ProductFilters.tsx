@@ -1,5 +1,4 @@
-import { Search, SlidersHorizontal } from 'lucide-react';
-import { Input } from './ui/input';
+import { SlidersHorizontal } from 'lucide-react';
 import { Button } from './ui/button';
 import {
   Select,
@@ -19,69 +18,124 @@ interface ProductFiltersProps {
 }
 
 export const ProductFilters = ({
-  searchTerm,
-  onSearchChange,
   selectedCategory,
   onCategoryChange,
-  sortBy,
-  onSortChange,
 }: ProductFiltersProps) => {
   return (
-    <div className="bg-card rounded-lg p-4 shadow-sm border space-y-4">
-      <div className="flex items-center gap-2">
-        <SlidersHorizontal className="h-5 w-5 text-muted-foreground" />
-        <h3 className="font-semibold">Filtros e Busca</h3>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h3 className="font-bold text-lg">FILTROS</h3>
+        <Button 
+          variant="link" 
+          className="text-primary text-sm p-0 h-auto"
+          onClick={() => onCategoryChange('all')}
+        >
+          LIMPAR TUDO
+        </Button>
       </div>
       
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input
-          type="text"
-          placeholder="Buscar produtos..."
-          value={searchTerm}
-          onChange={(e) => onSearchChange(e.target.value)}
-          className="pl-10"
-        />
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="text-sm font-medium mb-2 block">Categoria</label>
-          <Select value={selectedCategory} onValueChange={onCategoryChange}>
-            <SelectTrigger>
-              <SelectValue placeholder="Todas as categorias" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todas as categorias</SelectItem>
-              <SelectItem value="FENTY SKIN">FENTY SKIN</SelectItem>
-              <SelectItem value="SISLEY">SISLEY</SelectItem>
-              <SelectItem value="SOL DE JANEIRO">SOL DE JANEIRO</SelectItem>
-              <SelectItem value="CAUDALIE">CAUDALIE</SelectItem>
-              <SelectItem value="THE ORDINARY">THE ORDINARY</SelectItem>
-              <SelectItem value="GLOW RECIPE">GLOW RECIPE</SelectItem>
-              <SelectItem value="DIOR">DIOR</SelectItem>
-              <SelectItem value="ESTÉE LAUDER">ESTÉE LAUDER</SelectItem>
-              <SelectItem value="LA MER">LA MER</SelectItem>
-              <SelectItem value="SEPHORA COLLECTION">SEPHORA COLLECTION</SelectItem>
-              <SelectItem value="LANCÔME">LANCÔME</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div>
-          <label className="text-sm font-medium mb-2 block">Ordenar por</label>
-          <Select value={sortBy} onValueChange={onSortChange}>
-            <SelectTrigger>
-              <SelectValue placeholder="Ordenar" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="default">Padrão</SelectItem>
-              <SelectItem value="price-asc">Menor preço</SelectItem>
-              <SelectItem value="price-desc">Maior preço</SelectItem>
-              <SelectItem value="name-asc">A-Z</SelectItem>
-              <SelectItem value="name-desc">Z-A</SelectItem>
-            </SelectContent>
-          </Select>
+      <div>
+        <h4 className="font-semibold mb-3 flex items-center gap-2">
+          <SlidersHorizontal className="h-4 w-4" />
+          SKINCARE
+        </h4>
+        
+        <div className="space-y-2">
+          <Button
+            variant={selectedCategory === 'all' ? 'default' : 'ghost'}
+            className="w-full justify-start text-sm font-normal"
+            onClick={() => onCategoryChange('all')}
+          >
+            Todos os produtos
+          </Button>
+          
+          <Button
+            variant={selectedCategory === 'FENTY SKIN' ? 'default' : 'ghost'}
+            className="w-full justify-start text-sm font-normal"
+            onClick={() => onCategoryChange('FENTY SKIN')}
+          >
+            FENTY SKIN
+          </Button>
+          
+          <Button
+            variant={selectedCategory === 'SISLEY' ? 'default' : 'ghost'}
+            className="w-full justify-start text-sm font-normal"
+            onClick={() => onCategoryChange('SISLEY')}
+          >
+            SISLEY
+          </Button>
+          
+          <Button
+            variant={selectedCategory === 'SOL DE JANEIRO' ? 'default' : 'ghost'}
+            className="w-full justify-start text-sm font-normal"
+            onClick={() => onCategoryChange('SOL DE JANEIRO')}
+          >
+            SOL DE JANEIRO
+          </Button>
+          
+          <Button
+            variant={selectedCategory === 'CAUDALIE' ? 'default' : 'ghost'}
+            className="w-full justify-start text-sm font-normal"
+            onClick={() => onCategoryChange('CAUDALIE')}
+          >
+            CAUDALIE
+          </Button>
+          
+          <Button
+            variant={selectedCategory === 'THE ORDINARY' ? 'default' : 'ghost'}
+            className="w-full justify-start text-sm font-normal"
+            onClick={() => onCategoryChange('THE ORDINARY')}
+          >
+            THE ORDINARY
+          </Button>
+          
+          <Button
+            variant={selectedCategory === 'GLOW RECIPE' ? 'default' : 'ghost'}
+            className="w-full justify-start text-sm font-normal"
+            onClick={() => onCategoryChange('GLOW RECIPE')}
+          >
+            GLOW RECIPE
+          </Button>
+          
+          <Button
+            variant={selectedCategory === 'DIOR' ? 'default' : 'ghost'}
+            className="w-full justify-start text-sm font-normal"
+            onClick={() => onCategoryChange('DIOR')}
+          >
+            DIOR
+          </Button>
+          
+          <Button
+            variant={selectedCategory === 'ESTÉE LAUDER' ? 'default' : 'ghost'}
+            className="w-full justify-start text-sm font-normal"
+            onClick={() => onCategoryChange('ESTÉE LAUDER')}
+          >
+            ESTÉE LAUDER
+          </Button>
+          
+          <Button
+            variant={selectedCategory === 'LA MER' ? 'default' : 'ghost'}
+            className="w-full justify-start text-sm font-normal"
+            onClick={() => onCategoryChange('LA MER')}
+          >
+            LA MER
+          </Button>
+          
+          <Button
+            variant={selectedCategory === 'SEPHORA COLLECTION' ? 'default' : 'ghost'}
+            className="w-full justify-start text-sm font-normal"
+            onClick={() => onCategoryChange('SEPHORA COLLECTION')}
+          >
+            SEPHORA COLLECTION
+          </Button>
+          
+          <Button
+            variant={selectedCategory === 'LANCÔME' ? 'default' : 'ghost'}
+            className="w-full justify-start text-sm font-normal"
+            onClick={() => onCategoryChange('LANCÔME')}
+          >
+            LANCÔME
+          </Button>
         </div>
       </div>
     </div>

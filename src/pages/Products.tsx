@@ -5,6 +5,15 @@ import { HeroBanners } from '@/components/HeroBanners';
 import { ProductCard } from '@/components/ProductCard';
 import { ProductFilters } from '@/components/ProductFilters';
 import { products } from '@/data/products';
+import { ChevronRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 const Products = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -58,14 +67,73 @@ const Products = () => {
         <HeroBanners />
       </div>
       <main className="container px-4 py-8">
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold mb-2">Nossos Produtos</h2>
-          <p className="text-muted-foreground">
-            Descubra nossa linha completa de cuidados com a pele - {filteredAndSortedProducts.length} produtos encontrados
-          </p>
+        {/* Breadcrumb */}
+        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
+          <Link to="/" className="hover:text-foreground">Início</Link>
+          <ChevronRight className="h-4 w-4" />
+          <span className="text-foreground font-medium">Skincare</span>
         </div>
 
-        <div className="mb-6">
+        {/* Título */}
+        <h1 className="text-4xl font-bold mb-8">SKINCARE</h1>
+
+        {/* Layout com sidebar de filtros à esquerda */}
+        <div className="flex gap-8">
+          {/* Sidebar de Filtros */}
+          <aside className="hidden lg:block w-64 flex-shrink-0">
+            <ProductFilters
+              searchTerm={searchTerm}
+              onSearchChange={setSearchTerm}
+              selectedCategory={selectedCategory}
+              onCategoryChange={setSelectedCategory}
+              sortBy={sortBy}
+              onSortChange={setSortBy}
+            />
+          </aside>
+
+          {/* Área de produtos */}
+          <div className="flex-1">
+            {/* Barra de informações e ordenação */}
+            <div className="flex items-center justify-between mb-6">
+              <p className="text-sm text-muted-foreground">
+                Total de {filteredAndSortedProducts.length} produtos
+              </p>
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium">Ordenar por</span>
+                <Select value={sortBy} onValueChange={setSortBy}>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Novidades" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="default">Novidades</SelectItem>
+                    <SelectItem value="price-asc">Menor preço</SelectItem>
+                    <SelectItem value="price-desc">Maior preço</SelectItem>
+                    <SelectItem value="name-asc">A-Z</SelectItem>
+                    <SelectItem value="name-desc">Z-A</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* Grid de produtos */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredAndSortedProducts.map(product => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+
+            {filteredAndSortedProducts.length === 0 && (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground text-lg">
+                  Nenhum produto encontrado com os filtros selecionados.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Filtros mobile */}
+        <div className="lg:hidden mb-6">
           <ProductFilters
             searchTerm={searchTerm}
             onSearchChange={setSearchTerm}
@@ -75,20 +143,6 @@ const Products = () => {
             onSortChange={setSortBy}
           />
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {filteredAndSortedProducts.map(product => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-
-        {filteredAndSortedProducts.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground text-lg">
-              Nenhum produto encontrado com os filtros selecionados.
-            </p>
-          </div>
-        )}
       </main>
     </div>
   );
