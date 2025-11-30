@@ -99,13 +99,24 @@ const Checkout = () => {
           navigate('/');
         }
       } else {
-        throw new Error(data.error || data.message || 'Erro ao processar pagamento');
+        // Erro específico de cartão com mais detalhes
+        const errorMessage = data.message || data.error || 'Erro ao processar pagamento';
+        toast.error('Erro no pagamento', {
+          description: errorMessage,
+          duration: 8000,
+        });
+        throw new Error(errorMessage);
       }
     } catch (error: any) {
       console.error('Erro no checkout:', error);
-      toast.error('Erro ao processar pagamento', {
-        description: error.message,
-      });
+      
+      // Se ainda não foi mostrado um toast de erro, mostrar agora
+      if (!error.message?.includes('Transação rejeitada')) {
+        toast.error('Erro ao processar pagamento', {
+          description: error.message || 'Ocorreu um erro inesperado. Tente novamente.',
+          duration: 6000,
+        });
+      }
     } finally {
       setLoading(false);
     }
@@ -304,6 +315,15 @@ const Checkout = () => {
                     </p>
                   </TabsContent>
                   <TabsContent value="credit_card" className="space-y-4">
+                    <div className="rounded-lg bg-muted p-4 space-y-2">
+                      <p className="text-sm font-medium">⚠️ Importante sobre pagamentos com cartão</p>
+                      <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
+                        <li>Certifique-se de que todos os dados do cartão estão corretos</li>
+                        <li>O cartão deve ter limite disponível para a compra</li>
+                        <li>Verifique se o cartão está desbloqueado para compras online</li>
+                        <li>O nome deve estar exatamente como no cartão</li>
+                      </ul>
+                    </div>
                     <div className="grid md:grid-cols-2 gap-4">
                       <div className="space-y-2 md:col-span-2">
                         <Label htmlFor="cardNumber">Número do Cartão</Label>
