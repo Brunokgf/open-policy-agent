@@ -13,7 +13,7 @@ export const products: Product[] = [
   {
     id: '2',
     name: 'Protetor Solar Sisley Super Soin Solaire Corps SPF30',
-    price: 882.50,
+    price: 1765.00,
     image: '/images/3473311681058_01_1500px.avif',
     description: 'Protetor solar corporal de luxo com SPF30 da Sisley',
     category: 'SISLEY',
@@ -90,7 +90,7 @@ export const products: Product[] = [
   {
     id: '11',
     name: 'Creme para Olhos Sephora Collection Brightening',
-    price: 103.20,
+    price: 129.00,
     image: '/images/SC_Assets115.avif',
     images: ['/images/SC_Assets115.avif', '/images/SC_Assets116.avif', '/images/SC_Assets117.avif'],
     description: 'Creme iluminador para área dos olhos que reduz olheiras e hidrata',
@@ -108,7 +108,7 @@ export const products: Product[] = [
   {
     id: '13',
     name: 'Hidratante em Gel Sephora Collection Brightening Cream',
-    price: 127.20,
+    price: 159.00,
     image: '/images/SC_Assets225.avif',
     images: ['/images/SC_Assets225.avif', '/images/SC_Assets227.avif'],
     description: 'Hidratante em gel com efeito iluminador para pele radiante',
@@ -117,7 +117,7 @@ export const products: Product[] = [
   {
     id: '14',
     name: 'Massageador Facial Sephora Collection Ridoki Roller',
-    price: 143.20,
+    price: 179.00,
     image: '/images/SC_Assets167.avif',
     images: ['/images/SC_Assets167.avif', '/images/SC_Assets168.avif', '/images/SC_Assets169.avif'],
     description: 'Massageador facial Ridoki Roller para drenagem e relaxamento da pele',
@@ -126,7 +126,7 @@ export const products: Product[] = [
   {
     id: '15',
     name: 'Máscara Noturna Sephora Collection Soothe Plump & Hydrate Mask',
-    price: 79.20,
+    price: 99.00,
     image: '/images/imgi_116_s2882876-main-zoom.avif',
     images: ['/images/imgi_116_s2882876-main-zoom.avif', '/images/SC_Assets178.avif', '/images/SC_Assets183.avif'],
     description: 'Máscara noturna calmante que hidrata e preenche a pele enquanto você dorme',
@@ -135,7 +135,7 @@ export const products: Product[] = [
   {
     id: '16',
     name: 'Sérum Facial Sephora Collection Efeito Glow Boosting',
-    price: 131.40,
+    price: 179.00,
     image: '/images/SC_Assets225-2.avif',
     images: ['/images/SC_Assets225-2.avif', '/images/SC_Assets227-2.avif'],
     description: 'Sérum iluminador da Sephora Collection para pele radiante',
@@ -152,7 +152,7 @@ export const products: Product[] = [
   {
     id: '18',
     name: 'Sérum Glow Recipe Watermelon Glow Niacinamide Dewy Flush',
-    price: 164.25,
+    price: 219.00,
     image: '/images/810052964126_1.avif',
     images: ['/images/810052964126_1.avif', '/images/810052964126_5.avif', '/images/810052964126_6.avif'],
     description: 'Sérum iluminador com niacinamida que proporciona glow natural e rosado',
