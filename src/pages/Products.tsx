@@ -75,7 +75,7 @@ const Products = () => {
         </div>
 
         {/* Título */}
-        <h1 className="text-4xl font-bold mb-8">SKINCARE</h1>
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 md:mb-8">SKINCARE</h1>
 
         {/* Layout com sidebar de filtros à esquerda */}
         <div className="flex gap-8">
@@ -116,7 +116,7 @@ const Products = () => {
             </div>
 
             {/* Grid de produtos */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
               {filteredAndSortedProducts.map(product => (
                 <ProductCard key={product.id} product={product} />
               ))}
@@ -132,17 +132,6 @@ const Products = () => {
           </div>
         </div>
 
-        {/* Filtros mobile */}
-        <div className="lg:hidden mb-6">
-          <ProductFilters
-            searchTerm={searchTerm}
-            onSearchChange={setSearchTerm}
-            selectedCategory={selectedCategory}
-            onCategoryChange={setSelectedCategory}
-            sortBy={sortBy}
-            onSortChange={setSortBy}
-          />
-        </div>
       </main>
     </div>
   );

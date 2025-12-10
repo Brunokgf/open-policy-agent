@@ -58,30 +58,30 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             />
           </div>
         </CardContent>
-        <CardFooter className="flex flex-col items-start gap-2 p-4">
+        <CardFooter className="flex flex-col items-start gap-1 sm:gap-2 p-2 sm:p-4">
           <div className="w-full">
-            <p className="text-xs font-semibold text-foreground uppercase">{product.category}</p>
-            <h3 className="font-normal text-sm line-clamp-2 mt-1">{product.name}</h3>
+            <p className="text-[10px] sm:text-xs font-semibold text-foreground uppercase truncate">{product.category}</p>
+            <h3 className="font-normal text-xs sm:text-sm line-clamp-2 mt-0.5 sm:mt-1">{product.name}</h3>
           </div>
-          <div className="w-full space-y-1">
-            <div className="flex w-full items-start justify-between">
-              <div className="flex-1">
-                <p className="text-xs text-muted-foreground line-through">
+          <div className="w-full space-y-0.5 sm:space-y-1">
+            <div className="flex w-full items-start justify-between gap-1">
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] sm:text-xs text-muted-foreground line-through">
                   R$ {originalPrice.toFixed(2)}
                 </p>
-                <p className="text-lg font-bold text-foreground">
+                <p className="text-sm sm:text-lg font-bold text-foreground">
                   R$ {product.price.toFixed(2)}
                 </p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-[10px] sm:text-xs text-muted-foreground hidden sm:block">
                   OU 9X DE R$ {(product.price / 9).toFixed(2)}
                 </p>
               </div>
               <Button
                 size="icon"
                 onClick={handleAddToCart}
-                className="rounded-full flex-shrink-0"
+                className="rounded-full flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10"
               >
-                <ShoppingCart className="h-4 w-4" />
+                <ShoppingCart className="h-3 w-3 sm:h-4 sm:w-4" />
               </Button>
             </div>
           </div>
